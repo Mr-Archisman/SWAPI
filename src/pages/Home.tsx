@@ -108,7 +108,7 @@ const Home: React.FC = () => {
       key={page}
       onClick={() => handlePageChange(page)}
       className={`text-xs md:text-sm font-bold py-2 px-2 rounded ${
-        page === currentPage ? 'bg-zinc-700 text-white' : 'bg-zinc-500 text-white hover:bg-zinc-600'
+        page === currentPage ? 'bg-zinc-700 text-white dark:bg-white dark:text-zinc-800' : 'bg-zinc-500 text-white hover:bg-zinc-600'
       } ${darkMode ? 'bg-zinc-800 hover:bg-zinc-900' : ''}`}
     >
       {page}
