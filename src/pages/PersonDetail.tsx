@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {
   Box,
-
   Text,
   VStack,
   Heading,
@@ -26,6 +25,8 @@ const PersonDetail = () => {
   const [starships, setStarships] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { darkMode, toggleDarkMode } = useDarkMode();
+  const location = useLocation();
+  const fromPage = location.state?.fromPage || 1;
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -74,7 +75,10 @@ const PersonDetail = () => {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <Box className='dark:bg-[#202C36] bg-[#FAFAFA] dark:text-white lg:overflow-hidden' h='100vh'>
+      <Box
+        className='dark:bg-[#202C36] bg-[#FAFAFA] dark:text-white lg:overflow-hidden'
+        h='100vh'
+      >
         <div className='fixed top-0 w-full bg-white z-10 shadow-md p-4 dark:text-white dark:bg-[#2b3844]'>
           <div className='flex justify-between items-center max-w-6xl mx-auto'>
             <Link to={'/'} className='text-2xl font-bold'>
@@ -93,7 +97,7 @@ const PersonDetail = () => {
           <Box padding={4} marginTop='64px' className=' '>
             <div className='dark:bg-[#202C36] p-8 md:p-12 2xl:px-64 bg-[#FAFAFA]'>
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/?page=${fromPage}`)}
                 className='mb-4  hover:ring-gray-700 hover:ring-2 dark:hover:ring-2 dark:hover:ring-white text-black dark:text-white hover:text-zinc-500  dark:hover:text-gray-500 rounded-md'
               >
                 <div className='dark:bg-[#2b3844] rounded-md border-2 gap-3 py-1 px-4 flex justify-between items-center'>
@@ -114,7 +118,11 @@ const PersonDetail = () => {
                 </div>
               </button>
               <Heading mb={6}>{person?.name}</Heading>
-              <SimpleGrid columns={2} spacing={10} className='border-2 border-black dark:border-white rounded-md px-2 py-2 md:px-8 md:py-4'>
+              <SimpleGrid
+                columns={{ base: 1, md: 2 }}
+                spacing={10}
+                className='border-2 border-black dark:border-white rounded-md px-2 py-2 md:px-8 md:py-4'
+              >
                 <VStack spacing={4} align='start'>
                   <Text>
                     <Text as='span' fontWeight='semibold'>
@@ -180,7 +188,8 @@ const PersonDetail = () => {
                       py={1}
                       borderRadius='md'
                       m={1}
-                      transition="transform 0.2s, background-color 0.2s" _hover={{ transform: 'scale(1.05)' , border:"1px" }}
+                      transition='transform 0.2s, background-color 0.2s'
+                      _hover={{ transform: 'scale(1.05)', border: '1px' }}
                     >
                       {film}
                     </Box>
@@ -202,7 +211,8 @@ const PersonDetail = () => {
                         py={1}
                         borderRadius='md'
                         m={1}
-                        transition="transform 0.2s, background-color 0.2s" _hover={{ transform: 'scale(1.05)' , border:"1px" }}
+                        transition='transform 0.2s, background-color 0.2s'
+                        _hover={{ transform: 'scale(1.05)', border: '1px' }}
                       >
                         {vehicle}
                       </Box>
@@ -224,7 +234,8 @@ const PersonDetail = () => {
                         py={1}
                         borderRadius='md'
                         m={1}
-                        transition="transform 0.2s, background-color 0.2s" _hover={{ transform: 'scale(1.05)' , border:"1px" }}
+                        transition='transform 0.2s, background-color 0.2s'
+                        _hover={{ transform: 'scale(1.05)', border: '1px' }}
                       >
                         {starship}
                       </Box>

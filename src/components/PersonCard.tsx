@@ -1,8 +1,8 @@
 import { Box, Text, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import { Person } from '../types'; // Ensure this is correctly imported
 import { useDarkMode } from '../hooks/DarkModeContext';
-
-const PersonCard = ({ person }: { person: Person }) => {
+import { Link } from 'react-router-dom';
+const PersonCard = ({ person,currentPage  }: { person: Person ,currentPage :number}) => {
     // Extract the ID safely
     const personId = person.url.match(/\/api\/people\/(\d+)/)?.[1] ?? 'unknown';
     const { darkMode } = useDarkMode();
@@ -11,8 +11,10 @@ const PersonCard = ({ person }: { person: Person }) => {
     const textColor = darkMode ? "gray.200" : "gray.800";
 
     return (
-        <LinkBox as="article" maxW="lg" p="5" borderWidth="1px" rounded="md" shadow="md" height="100%" width="100%" bg={darkMode ? "gray.700" : "white"} transition="transform 0.2s, background-color 0.2s" _hover={{ transform: 'scale(1.05)' }}>
-            <LinkOverlay href={`/person/${personId}`} isExternal={false}>
+        <Link to={`/person/${personId}`} state={{ fromPage: currentPage }}>
+        <LinkBox as="article" maxW="lg" p="5" borderWidth="1px" rounded="md" shadow="md" height="100%" width="100%" bg={darkMode ? "#2b3844" : "white"} transition="transform 0.2s, background-color 0.2s" _hover={{ transform: 'scale(1.05)' }}>
+            
+            <LinkOverlay href={`/person/${personId}`} isExternal={false} >
                 <Box p="5">
                     <Text fontSize="xl" fontWeight="bold" color={textColor}>{person.name}</Text>
                     <Text mt="1" color={textColor}>
@@ -31,6 +33,7 @@ const PersonCard = ({ person }: { person: Person }) => {
                 </Box>
             </LinkOverlay>
         </LinkBox>
+        </Link>
     );
 };
 

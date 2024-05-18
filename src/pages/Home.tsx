@@ -1,15 +1,19 @@
-import{ useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import PersonCard from '../components/PersonCard';
 import { fetchPeopleFromUrl } from '../services/countryService';
 import { Person } from '../types';
 import { useDarkMode } from '../hooks/DarkModeContext';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
+import Loader from '../components/Loader';
 
 const Home: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
-  const [allPeople, setAllPeople] = useState<Person[]>([]); // To hold all fetched people for search filtering
-  const [currentPage, setCurrentPage] = useState(1);
+  const [allPeople, setAllPeople] = useState<Person[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get('page')) || 1
+  );
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +46,7 @@ const Home: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    setSearchParams({ page: page.toString() });
   };
 
   return (
@@ -69,62 +74,65 @@ const Home: React.FC = () => {
           />
         </div>
         <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-16 mt-12 dark:bg-[#202C36] justify-center items-center '>
-                 {people.length > 0 ? (
+          {people.length > 0 ? (
             people.map((person, index) => (
               <>
-                {index === 8 && <div className='hidden xl:block w-full h-0'></div>}
-                {index === 9 && <div className='hidden md:block xl:hidden w-full h-0'></div>}
-                <PersonCard key={index} person={person} />
+                {index === 8 && (
+                  <div className='hidden xl:block w-full h-0'></div>
+                )}
+                {index === 9 && (
+                  <div className='hidden md:block xl:hidden w-full h-0'></div>
+                )}
+
+                <PersonCard
+                  key={index}
+                  person={person}
+                  currentPage={currentPage}
+                />
               </>
             ))
           ) : (
             <div className='text-center w-full'>No results found.</div>
           )}
-          {isLoading && (
-            <div className='flex justify-center items-center h-full w-full fixed left-0 top-0 right-0 bottom-0 bg-[rgba(0,0,0,0.3)]'>
-              <div
-                className='inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]'
-                role='status'
-              >
-                <span className='absolute -m-px h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip:rect(0,0,0,0)'>
-                  Loading...
-                </span>
-              </div>
-            </div>
-          )}
+          {isLoading && <Loader />}
         </div>
         <div className='flex items-center justify-center space-x-2 mt-12'>
-  <button
-    onClick={() => handlePageChange(currentPage - 1)}
-    disabled={currentPage === 1}
-    className={`text-xs md:text-sm bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 ${
-      darkMode ? 'bg-zinc-700 hover:bg-zinc-800' : 'bg-zinc-500 hover:bg-zinc-600'
-    }`}
-  >
-    {'<<'}
-  </button>
-  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-    <button
-      key={page}
-      onClick={() => handlePageChange(page)}
-      className={`text-xs md:text-sm font-bold py-2 px-2 rounded ${
-        page === currentPage ? 'bg-zinc-700 text-white dark:bg-white dark:text-zinc-800' : 'bg-zinc-500 text-white hover:bg-zinc-600'
-      } ${darkMode ? 'bg-zinc-800 hover:bg-zinc-900' : ''}`}
-    >
-      {page}
-    </button>
-  ))}
-  <button
-    onClick={() => handlePageChange(currentPage + 1)}
-    disabled={currentPage === totalPages}
-    className={`text-xs md:text-sm bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 ${
-      darkMode ? 'bg-zinc-800 hover:bg-zinc-900' : 'bg-zinc-500 hover:bg-zinc-600'
-    }`}
-  >
-    {'>>'}
-  </button>
-</div>
-
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`text-xs md:text-sm bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 ${
+              darkMode
+                ? 'bg-zinc-700 hover:bg-zinc-800'
+                : 'bg-zinc-500 hover:bg-zinc-600'
+            }`}
+          >
+            {'<<'}
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`text-xs md:text-sm font-bold py-2 px-2 rounded ${
+                page === currentPage
+                  ? 'bg-zinc-700 text-white dark:bg-white dark:text-zinc-800'
+                  : 'bg-zinc-500 text-white hover:bg-zinc-600'
+              } ${darkMode ? 'bg-zinc-800 hover:bg-zinc-900' : ''}`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`text-xs md:text-sm bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 ${
+              darkMode
+                ? 'bg-zinc-800 hover:bg-zinc-900'
+                : 'bg-zinc-500 hover:bg-zinc-600'
+            }`}
+          >
+            {'>>'}
+          </button>
+        </div>
       </div>
     </div>
   );
